@@ -1,0 +1,40 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="urn:jboss:domain:security-providers:1.0" xmlns="urn:jboss:domain:security-providers:1.0"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.0">
+
+	<xs:element name="subsystem" type="securityProviders-containerType" />
+
+	<xs:complexType name="securityProviders-containerType">
+		<xs:annotation>
+			<xs:documentation>
+               <![CDATA[
+The security-provider subsystem, used to configure additional Java Security Providers.
+                ]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="security-providers" type="security-providersType" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="security-providersType">
+		<xs:sequence>
+			<xs:element name="sun-pkcs11" type="sunPkcs11Type"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="sunPkcs11Type">
+		<xs:sequence>
+			<xs:element name="attribute" type="propertyType"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="propertyType">
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="value" type="xs:string" use="required" />
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,7 @@
+<subsystem xmlns="urn:jboss:domain:security-providers:1.0">
+	<security-providers>
+		<sunpkcs11 name='test'>
+			<attribute name='nssDummy' value='nssTest' />
+		</sunpkcs11>
+	</security-providers>
+</subsystem>
