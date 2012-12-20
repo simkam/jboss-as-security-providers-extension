@@ -37,6 +37,11 @@ import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 
+/**
+ * The SunPKCS11Service instance registers and removes a SunPKCS11 security provider.
+ * 
+ * @author Josef Cacek
+ */
 public class SunPKCS11Service implements Service<SunPKCS11Service> {
 
     private static final String SUN_PKCS11_CLASS_NAME = "sun.security.pkcs11.SunPKCS11";
@@ -67,6 +72,7 @@ public class SunPKCS11Service implements Service<SunPKCS11Service> {
     // Public methods --------------------------------------------------------
 
     /**
+     * Returns this instance.
      * 
      * @return
      * @throws IllegalStateException
@@ -78,6 +84,7 @@ public class SunPKCS11Service implements Service<SunPKCS11Service> {
     }
 
     /**
+     * Adds (registers) a SunPKCS11 security provider.
      * 
      * @param context
      * @throws StartException
@@ -119,7 +126,7 @@ public class SunPKCS11Service implements Service<SunPKCS11Service> {
     }
 
     /**
-     * Stoping
+     * Removes the SunPKCS11 security provider.
      * 
      * @param context
      * @see org.jboss.msc.service.Service#stop(org.jboss.msc.service.StopContext)
@@ -140,11 +147,25 @@ public class SunPKCS11Service implements Service<SunPKCS11Service> {
 
     }
 
-    public static ServiceName createServiceName(String providerName) {
+    /**
+     * Creates a service name for the given SunPKCS11 provider name.
+     * 
+     * @param providerName
+     * @return
+     */
+    public static ServiceName createServiceName(final String providerName) {
         return ServiceName.JBOSS.append("security-providers", "sunpkcs11", providerName);
     }
 
     // Private methods -------------------------------------------------------
+
+    /**
+     * Adds a config line (name=value pair) to the given {@link StringBuilder} instance.
+     * 
+     * @param sb
+     * @param name
+     * @param value
+     */
     private void appendConfigLine(StringBuilder sb, String name, String value) {
         sb.append(name).append("=").append(value).append("\n");
     }

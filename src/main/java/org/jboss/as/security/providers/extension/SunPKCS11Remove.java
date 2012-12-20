@@ -29,19 +29,42 @@ import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceName;
 
+/**
+ * A handler for removing SunPKCS11 provider.
+ * 
+ * @author Josef Cacek
+ */
 class SunPKCS11Remove extends AbstractRemoveStepHandler {
 
     public static final SunPKCS11Remove INSTANCE = new SunPKCS11Remove();
 
+    // Constructors ----------------------------------------------------------
+
+    /**
+     * Private ctor.
+     */
     private SunPKCS11Remove() {
     }
 
+    // Public methods --------------------------------------------------------
+
+    /**
+     * Removes a {@link SunPKCS11Service} instance.
+     * 
+     * @param context
+     * @param operation
+     * @param model
+     * @throws OperationFailedException
+     * @see org.jboss.as.controller.AbstractRemoveStepHandler#performRuntime(org.jboss.as.controller.OperationContext,
+     *      org.jboss.dmr.ModelNode, org.jboss.dmr.ModelNode)
+     */
     @Override
     protected void performRuntime(OperationContext context, ModelNode operation, ModelNode model)
             throws OperationFailedException {
-        String suffix = PathAddress.pathAddress(operation.get(ModelDescriptionConstants.ADDRESS)).getLastElement().getValue();
-        ServiceName name = SunPKCS11Service.createServiceName(suffix);
-        context.removeService(name);
+        final String providerName = PathAddress.pathAddress(operation.get(ModelDescriptionConstants.ADDRESS)).getLastElement()
+                .getValue();
+        final ServiceName serviceName = SunPKCS11Service.createServiceName(providerName);
+        context.removeService(serviceName);
     }
 
 }

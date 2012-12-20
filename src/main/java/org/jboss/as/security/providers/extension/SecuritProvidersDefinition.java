@@ -21,21 +21,38 @@
  */
 package org.jboss.as.security.providers.extension;
 
+import org.jboss.as.controller.AbstractAddStepHandler;
+import org.jboss.as.controller.AbstractRemoveStepHandler;
+import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.SimpleResourceDefinition;
+import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 
+/**
+ * Resource definition for security-providers extension.
+ * 
+ * @author Josef Cacek
+ */
 public class SecuritProvidersDefinition extends SimpleResourceDefinition {
 
     private static final Logger LOGGER = Logger.getLogger(SecuritProvidersDefinition.class);
 
     public static final SecuritProvidersDefinition INSTANCE = new SecuritProvidersDefinition();
 
+    // Constructors ----------------------------------------------------------
+
+    /**
+     * Create a new SecuritProvidersDefinition (with Add and Remove operations).
+     */
     private SecuritProvidersDefinition() {
         super(SecurityProvidersExtension.SUBSYSTEM_PATH, SecurityProvidersExtension.getResourceDescriptionResolver(null),
-        //We always need to add an 'add' operation
-                SubsystemAdd.INSTANCE,
-                //Every resource that is added, normally needs a remove operation
-                SubsystemRemove.INSTANCE);
+                new AbstractAddStepHandler() {
+                    @Override
+                    protected void populateModel(ModelNode operation, ModelNode model) throws OperationFailedException {
+                        model.setEmptyObject();
+                    }
+                }, new AbstractRemoveStepHandler() {
+                });
         LOGGER.debug("Creating SecuritProvidersDefinition.");
     }
 }

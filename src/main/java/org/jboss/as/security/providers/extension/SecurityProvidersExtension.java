@@ -38,6 +38,7 @@ import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.SubsystemRegistration;
+import org.jboss.as.controller.descriptions.ResourceDescriptionResolver;
 import org.jboss.as.controller.descriptions.StandardResourceDescriptionResolver;
 import org.jboss.as.controller.operations.common.GenericSubsystemDescribeHandler;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
@@ -52,6 +53,11 @@ import org.jboss.staxmapper.XMLElementWriter;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
 
+/**
+ * An extension to the JBoss Application Server which registers additional Java Security Providers at runtime.
+ * 
+ * @author Josef Cacek
+ */
 public class SecurityProvidersExtension implements Extension {
 
     /**
@@ -64,6 +70,9 @@ public class SecurityProvidersExtension implements Extension {
      */
     public static final String SUBSYSTEM_NAME = "security-providers";
 
+    /**
+     * Name of the model attribute, which holds SunPKCS11 attributes.
+     */
     public static final String ATTRIBUTES = "attributes";
 
     /**
@@ -72,22 +81,35 @@ public class SecurityProvidersExtension implements Extension {
     private final SubsystemParser parser = new SubsystemParser();
 
     protected static final PathElement SUBSYSTEM_PATH = PathElement.pathElement(SUBSYSTEM, SUBSYSTEM_NAME);
+
+    /** Path to the ResourceBundle. */
     private static final String RESOURCE_NAME = SecurityProvidersExtension.class.getPackage().getName() + ".LocalDescriptions";
 
+    /** Model node name with SunPKCS11 configuration */
     public static final String SUNPKCS11 = "sunpkcs11";
+
+    /** The SunPKCS11 registration address in the model. */
     public static final PathElement SUNPKCS11_PATH = PathElement.pathElement(SUNPKCS11);
 
-    static StandardResourceDescriptionResolver getResourceDescriptionResolver(final String keyPrefix) {
-        String prefix = SUBSYSTEM_NAME + (keyPrefix == null ? "" : "." + keyPrefix);
-        return new StandardResourceDescriptionResolver(prefix, RESOURCE_NAME,
-                SecurityProvidersExtension.class.getClassLoader(), true, false);
-    }
+    // Public methods --------------------------------------------------------
 
+    /**
+     * Initialize the XML parsers for this extension.
+     * 
+     * @param context
+     * @see org.jboss.as.controller.Extension#initializeParsers(org.jboss.as.controller.parsing.ExtensionParsingContext)
+     */
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
         context.setSubsystemXmlMapping(SUBSYSTEM_NAME, NAMESPACE, parser);
     }
 
+    /**
+     * Initialize this extension - registers the subsystem and its model.
+     * 
+     * @param context
+     * @see org.jboss.as.controller.Extension#initialize(org.jboss.as.controller.ExtensionContext)
+     */
     @Override
     public void initialize(ExtensionContext context) {
         final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME, 1, 0);
@@ -100,6 +122,27 @@ public class SecurityProvidersExtension implements Extension {
         subsystem.registerXMLElementWriter(parser);
     }
 
+    // Protected methods -----------------------------------------------------
+
+    /**
+     * Returns {@link ResourceDescriptionResolver} instance for the given key prefix.
+     * 
+     * @param keyPrefix
+     * @return
+     */
+    protected static StandardResourceDescriptionResolver getResourceDescriptionResolver(final String keyPrefix) {
+        String prefix = SUBSYSTEM_NAME + (keyPrefix == null ? "" : "." + keyPrefix);
+        return new StandardResourceDescriptionResolver(prefix, RESOURCE_NAME,
+                SecurityProvidersExtension.class.getClassLoader(), true, false);
+    }
+
+    // Private methods -------------------------------------------------------
+
+    /**
+     * Creates add operation for this subsystem.
+     * 
+     * @return ModelNode instance
+     */
     private static ModelNode createAddSubsystemOperation() {
         final ModelNode subsystem = new ModelNode();
         subsystem.get(OP).set(ADD);
@@ -107,8 +150,10 @@ public class SecurityProvidersExtension implements Extension {
         return subsystem;
     }
 
+    // Embedded classes ------------------------------------------------------
+
     /**
-     * The subsystem parser, which uses stax to read and write to and from xml
+     * The subsystem parser, which uses STAX to read and write to and from XML.
      */
     private static class SubsystemParser implements XMLStreamConstants, XMLElementReader<List<ModelNode>>,
             XMLElementWriter<SubsystemMarshallingContext> {

@@ -37,18 +37,51 @@ import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 
+/**
+ * A handler for adding SunPKCS11 provider.
+ * 
+ * @author Josef Cacek
+ */
 class SunPKCS11Add extends AbstractAddStepHandler {
 
     public static final SunPKCS11Add INSTANCE = new SunPKCS11Add();
 
+    // Constructors ----------------------------------------------------------
+
+    /**
+     * Private ctor.
+     */
     private SunPKCS11Add() {
     }
 
+    // Public methods --------------------------------------------------------
+
+    /**
+     * Model population.
+     * 
+     * @param operation
+     * @param model
+     * @throws OperationFailedException
+     * @see org.jboss.as.controller.AbstractAddStepHandler#populateModel(org.jboss.dmr.ModelNode, org.jboss.dmr.ModelNode)
+     */
     @Override
     protected void populateModel(ModelNode operation, ModelNode model) throws OperationFailedException {
         SunPKCS11ResourceDefinition.ATTRIBUTES.validateAndSet(operation, model);
     }
 
+    /**
+     * Creates and registers {@link SunPKCS11Service} instance with the given configuration.
+     * 
+     * @param context
+     * @param operation
+     * @param model
+     * @param verificationHandler
+     * @param newControllers
+     * @throws OperationFailedException
+     * @see org.jboss.as.controller.AbstractAddStepHandler#performRuntime(org.jboss.as.controller.OperationContext,
+     *      org.jboss.dmr.ModelNode, org.jboss.dmr.ModelNode, org.jboss.as.controller.ServiceVerificationHandler,
+     *      java.util.List)
+     */
     @Override
     protected void performRuntime(OperationContext context, ModelNode operation, ModelNode model,
             ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers)

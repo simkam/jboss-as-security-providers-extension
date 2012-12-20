@@ -38,9 +38,16 @@ import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
 import org.jboss.dmr.Property;
 
+/**
+ * A ResourceDefinition for SunPKCS11.
+ * 
+ * @author Josef Cacek
+ */
 public class SunPKCS11ResourceDefinition extends SimpleResourceDefinition {
 
     protected static final AttributeDefinition ATTRIBUTES = new AttributesAttributeDefinition();
+
+    // Constructors ----------------------------------------------------------
 
     SunPKCS11ResourceDefinition() {
         super(SecurityProvidersExtension.SUNPKCS11_PATH, SecurityProvidersExtension
@@ -48,11 +55,24 @@ public class SunPKCS11ResourceDefinition extends SimpleResourceDefinition {
                 SunPKCS11Remove.INSTANCE);
     }
 
+    // Public methods --------------------------------------------------------
+
+    /**
+     * Registers the "attributes" attribute.
+     * 
+     * @param resourceRegistration
+     * @see org.jboss.as.controller.SimpleResourceDefinition#registerAttributes(org.jboss.as.controller.registry.ManagementResourceRegistration)
+     */
     @Override
     public void registerAttributes(ManagementResourceRegistration resourceRegistration) {
         resourceRegistration.registerReadOnlyAttribute(ATTRIBUTES, null);
     }
 
+    // Embedded classes ------------------------------------------------------
+
+    /**
+     * A AttributesAttributeDefinition.
+     */
     private static class AttributesAttributeDefinition extends MapAttributeDefinition {
 
         /**
