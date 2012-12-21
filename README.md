@@ -24,7 +24,7 @@ Copy the produced module to the JBoss AS modules (set correct path to `$JBOSS_HO
 	$ JBOSS_HOME=/home/test/jboss-as
 	$ cp -R target/modules/* "$JBOSS_HOME/modules"
 	
-Until `sun.jdk` package exports are fixed in the JBoss AS you have to edit file `$JBOSS_HOME/modules/sun/jdk/main/module.xml` manually. Add this line to exports:
+Until `sun.jdk` package exports are fixed ([JBPAPP6-1748](https://issues.jboss.org/browse/JBPAPP6-1748)) in the JBoss AS you have to edit file `$JBOSS_HOME/modules/sun/jdk/main/module.xml` manually. Add this line to exports:
 
 	<path name="sun/security/pkcs11"/>
 
@@ -36,4 +36,10 @@ Use the CLI -  `jboss-cli.sh` (or `.bat`). Add the AS extension and register the
 	/subsystem=security-providers:add
 	/subsystem=security-providers/sunpkcs11=NSSfips:add(attributes=[("nssLibraryDirectory"=>"/opt/tests/nss/lib"),("nssSecmodDirectory"=>"/opt/tests/nss/fipsdb"),("nssModule"=>"fips")])
 
+Look at [Java PKCS#11 Reference Guide](http://docs.oracle.com/javase/6/docs/technotes/guides/security/p11guide.html) to get list of possible attribues.
+
 Check JBoss AS console (or log files) if no error occures during the Security Provider registration. 
+
+## License
+
+* [GNU Lesser General Public License Version 2.1](http://www.gnu.org/licenses/lgpl-2.1-standalone.html)
