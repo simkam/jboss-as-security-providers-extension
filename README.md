@@ -19,10 +19,10 @@ You need to have [Maven](http://maven.apache.org/) installed
 
 ## How to install it
 
-Copy the produced module to the JBoss AS modules (set correct path to `JBOSS_HOME`):
+Copy the produced module to the JBoss AS modules (set correct path to `$JBOSS_HOME`):
 
 	$ JBOSS_HOME=/home/test/jboss-as
-	$ cp -R target/module/* "$JBOSS_HOME/modules"
+	$ cp -R target/modules/* "$JBOSS_HOME/modules"
 	
 Until `sun.jdk` package exports are fixed in the JBoss AS you have to edit file `$JBOSS_HOME/modules/sun/jdk/main/module.xml` manually. Add this line to exports:
 
@@ -30,7 +30,7 @@ Until `sun.jdk` package exports are fixed in the JBoss AS you have to edit file 
 
 ## How to use it
 
-Use the CLI -  jboss-cli.sh (or .bat). Add the AS extension and register the security provider(s): 
+Use the CLI -  `jboss-cli.sh` (or `.bat`). Add the AS extension and register the security provider(s): 
 
 	/extension=org.jboss.as.security.providers:add
 	/subsystem=security-providers:add

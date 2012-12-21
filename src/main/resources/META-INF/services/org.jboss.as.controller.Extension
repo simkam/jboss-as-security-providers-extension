@@ -1,1 +1,1 @@
-org.jboss.as.security.providers.extension.SecurityProvidersExtension
+${extension.class}
