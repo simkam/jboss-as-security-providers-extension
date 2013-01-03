@@ -37,6 +37,7 @@ import org.jboss.as.controller.Extension;
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.PathElement;
+import org.jboss.as.controller.SimpleResourceDefinition;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.descriptions.ResourceDescriptionResolver;
 import org.jboss.as.controller.descriptions.StandardResourceDescriptionResolver;
@@ -88,8 +89,13 @@ public class SecurityProvidersExtension implements Extension {
     /** Model node name with SunPKCS11 configuration */
     public static final String SUNPKCS11 = "sunpkcs11";
 
+    /** Model node name with security provider class name */
+    public static final String SIMPLE_PROVIDER = "simple-provider";
+
     /** The SunPKCS11 registration address in the model. */
     public static final PathElement SUNPKCS11_PATH = PathElement.pathElement(SUNPKCS11);
+
+    public static final PathElement SIMPLE_PROVIDER_PATH = PathElement.pathElement(SIMPLE_PROVIDER);
 
     // Public methods --------------------------------------------------------
 
@@ -117,6 +123,9 @@ public class SecurityProvidersExtension implements Extension {
                 .registerSubsystemModel(SecuritProvidersDefinition.INSTANCE);
         registration.registerOperationHandler(DESCRIBE, GenericSubsystemDescribeHandler.INSTANCE,
                 GenericSubsystemDescribeHandler.INSTANCE, false, OperationEntry.EntryType.PRIVATE);
+        registration.registerSubModel(new SimpleResourceDefinition(SecurityProvidersExtension.SIMPLE_PROVIDER_PATH,
+                SecurityProvidersExtension.getResourceDescriptionResolver(SecurityProvidersExtension.SIMPLE_PROVIDER),
+                SimpleProviderAdd.INSTANCE, SimpleProviderRemove.INSTANCE));
         registration.registerSubModel(new SunPKCS11ResourceDefinition());
 
         subsystem.registerXMLElementWriter(parser);
@@ -159,6 +168,7 @@ public class SecurityProvidersExtension implements Extension {
             XMLElementWriter<SubsystemMarshallingContext> {
 
         private static final String EL_SECURITY_PROVIDERS = "security-providers";
+        private static final String EL_PROVIDER_CLASS = "provider-class";
         private static final String EL_SUNPKCS11 = "sunpkcs11";
         private static final String AT_SUNPKCS11_NAME = "name";
         private static final String EL_ATTRIBUTE = "attribute";
@@ -173,6 +183,17 @@ public class SecurityProvidersExtension implements Extension {
             context.startSubsystemElement(SecurityProvidersExtension.NAMESPACE, false);
             writer.writeStartElement(EL_SECURITY_PROVIDERS);
             ModelNode node = context.getModelNode();
+            ModelNode simpleProviderNodes = node.get(SIMPLE_PROVIDER);
+            if (simpleProviderNodes.isDefined()) {
+                for (Property property : simpleProviderNodes.asPropertyList()) {
+                    //write each child element to xml
+                    writer.writeStartElement(EL_PROVIDER_CLASS);
+                    writer.writeCharacters(property.getName());
+                    //end EL_PROVIDER_CLASS
+                    writer.writeEndElement();
+                }
+            }
+
             ModelNode sunpkcs11Nodes = node.get(SUNPKCS11);
             if (sunpkcs11Nodes.isDefined()) {
                 for (Property property : sunpkcs11Nodes.asPropertyList()) {
@@ -218,7 +239,17 @@ public class SecurityProvidersExtension implements Extension {
                 }
                 while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
                     if (reader.isStartElement()) {
-                        readSunPKCS11(reader, list);
+                        if (reader.getLocalName().equals(EL_PROVIDER_CLASS)) {
+                            ModelNode addTypeOperation = new ModelNode();
+                            addTypeOperation.get(OP).set(ADD);
+                            final String providerClassName = reader.getElementText();
+                            PathAddress addr = PathAddress.pathAddress(SUBSYSTEM_PATH,
+                                    PathElement.pathElement(SIMPLE_PROVIDER, providerClassName));
+                            addTypeOperation.get(OP_ADDR).set(addr.toModelNode());
+                            list.add(addTypeOperation);
+                        } else {
+                            readSunPKCS11(reader, list);
+                        }
                     }
                 }
             }

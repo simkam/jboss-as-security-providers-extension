@@ -2,7 +2,7 @@
 
 Extension for registering Java Security Providers in JBoss AS at runtime.
 
-Current version supports only SunPKCS11 provider.
+Current version supports SunPKCS11 provider and providers with public constructor without arguments.
 
 ## How to get it
 

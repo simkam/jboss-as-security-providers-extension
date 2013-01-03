@@ -1,5 +1,6 @@
 <subsystem xmlns="urn:jboss:domain:security-providers:1.0">
 	<security-providers>
+		<provider-class>org.bouncycastle.jce.provider.BouncyCastleProvider</provider-class>
 		<sunpkcs11 name='test'>
 			<attribute name='nssDummy' value='nssTest' />
 		</sunpkcs11>

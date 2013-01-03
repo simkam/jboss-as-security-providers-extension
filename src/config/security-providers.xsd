@@ -8,9 +8,9 @@
 	<xs:complexType name="securityProviders-containerType">
 		<xs:annotation>
 			<xs:documentation>
-               <![CDATA[
+			<![CDATA[
 The security-provider subsystem, used to configure additional Java Security Providers.
-                ]]>
+			]]>
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
@@ -20,10 +20,11 @@ The security-provider subsystem, used to configure additional Java Security Prov
 
 	<xs:complexType name="security-providersType">
 		<xs:sequence>
-			<xs:element name="sun-pkcs11" type="sunPkcs11Type"
+			<xs:element name="provider-class" type="xs:string"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="sunpkcs11" type="sunPkcs11Type"
 				minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
-		<xs:attribute name="name" type="xs:string" use="required" />
 	</xs:complexType>
 
 	<xs:complexType name="sunPkcs11Type">
@@ -31,6 +32,7 @@ The security-provider subsystem, used to configure additional Java Security Prov
 			<xs:element name="attribute" type="propertyType"
 				minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required" />
 	</xs:complexType>
 
 	<xs:complexType name="propertyType">
