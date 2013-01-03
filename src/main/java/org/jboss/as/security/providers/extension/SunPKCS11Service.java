@@ -108,8 +108,8 @@ public class SunPKCS11Service implements Service<SunPKCS11Service> {
                         final Provider sunPKCS11Provider = (Provider) Class.forName(SUN_PKCS11_CLASS_NAME)
                                 .getConstructor(java.io.InputStream.class)
                                 .newInstance(new ByteArrayInputStream(sb.toString().getBytes()));
-                        providerName = sunPKCS11Provider.getName();
                         Security.addProvider(sunPKCS11Provider);
+                        providerName = sunPKCS11Provider.getName();
                         return null;
                     }
                 });
@@ -117,6 +117,7 @@ public class SunPKCS11Service implements Service<SunPKCS11Service> {
                 final Provider sunPKCS11Provider = (Provider) Class.forName(SUN_PKCS11_CLASS_NAME)
                         .getConstructor(java.io.InputStream.class)
                         .newInstance(new ByteArrayInputStream(sb.toString().getBytes()));
+                Security.addProvider(sunPKCS11Provider);
                 providerName = sunPKCS11Provider.getName();
             }
         } catch (Exception e) {
